@@ -15,6 +15,6 @@ public:
 	bool initWithArgs(Color3B color, Size size, Point pos);
 
 	Color3B getColor();
-	Point getPosition();
-	void setPosition(Point position);
+	//Point getPosition();
+	//void setPosition(Point position);
 };

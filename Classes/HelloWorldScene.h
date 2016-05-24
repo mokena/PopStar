@@ -2,6 +2,7 @@
 #define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
+#include "Star.h"
 
 class HelloWorld : public cocos2d::Layer
 {
@@ -15,6 +16,16 @@ public:
     
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
+
+private:
+	static const int NUM_OF_STAR_ROW = 10;
+	static const int COLOR_NUM = 6;
+	static const float STAR_GAP;
+
+	Star* stars[10][10];
+
+	void addStars();
+	Star* getTouchedStar(Point p);
 };
 
 #endif // __HELLOWORLD_SCENE_H__
