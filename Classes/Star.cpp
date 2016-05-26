@@ -1,6 +1,6 @@
 #include "Star.h"
 
-Star* Star::createWithArgs(Color3B color, Size size, Point pos) {
+Star* Star::createWithArgs(Color3B color, Size size, Vec2 pos) {
 	Star* star = new Star();
 	if (star&&star->init()) {
 		star->initWithArgs(color, size, pos);
@@ -17,7 +17,7 @@ bool Star::init() {
 	return Sprite::init();
 }
 
-bool Star::initWithArgs(Color3B color, Size size, Point pos) {
+bool Star::initWithArgs(Color3B color, Size size, Vec2 pos) {
 	this->color = color;
 	this->pos = pos;
 
@@ -34,11 +34,11 @@ Color3B Star::getColor() {
 	return color;
 }
 
-//Point Star::getPosition() {
-//	return pos;
-//}
-//
-//void Star::setPosition(Point position) {
-//	pos = position;
-//	setPosition(Vec2(pos.x, pos.y));
-//}
+Vec2 Star::getPos() {
+	return pos;
+}
+
+void Star::setPos(Vec2 position) {
+	pos = position;
+	//setPosition(Vec2(pos.x, pos.y));
+}

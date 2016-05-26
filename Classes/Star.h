@@ -5,16 +5,16 @@ USING_NS_CC;
 class Star : public Sprite {
 private:
 	Color3B color;
-	Point pos;
+	Vec2 pos;
 
 public:
-	static Star* createWithArgs(Color3B color, Size size, Point pos);
+	static Star* createWithArgs(Color3B color, Size size, Vec2 pos);
 
 	virtual bool init();
 
-	bool initWithArgs(Color3B color, Size size, Point pos);
+	bool initWithArgs(Color3B color, Size size, Vec2 pos);
 
 	Color3B getColor();
-	//Point getPosition();
-	//void setPosition(Point position);
+	Point getPos();
+	void setPos(Vec2 position);
 };
