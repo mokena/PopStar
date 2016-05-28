@@ -26,7 +26,10 @@ private:
 
 	void addStars();
 	Star* getTouchedStar(Vec2 p);
+	void getAllSameStars(Star* center);
 	Vector<Star*>* getRoundSameStars(Star* center);
+	void getSameStarsIterator(Vector<Star*>* input);
+	Vector<Star*>* sameStars;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

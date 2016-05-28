@@ -38,7 +38,11 @@ bool HelloWorld::init()
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = [this](Touch* t, Event* e) {
 		Star* star = getTouchedStar(t->getLocation());
-		getRoundSameStars(star);
+		//getRoundSameStars(star);
+		getAllSameStars(star);
+		for (auto it = sameStars->begin(); it != sameStars->end(); it++) {
+			(*it)->setColor(Color3B::GRAY);
+		}
 		return false;
 	};
 
@@ -85,48 +89,70 @@ Star* HelloWorld::getTouchedStar(Vec2 p) {
 	getRoundSameStars: get the same star with the center around the center.
 */
 Vector<Star*>* HelloWorld::getRoundSameStars(Star* center) {
+	Vector<Star*>* roundStars = new Vector<Star*>();
+	
 	int cx = center->getPos().x;
 	int cy = center->getPos().y;
-	CCLOG("get round of  %d, %d", cx, cy);
-	Vector<Star*>* sameStars = new Vector<Star*>();
-	sameStars->pushBack(center);
 	
-	//get upper stars in the same color with center star
-	for (int i = cy+1; i < NUM_OF_STAR_ROW; i++) {
-		if (stars[cx][i]->getColor() == center->getColor()) {
-			stars[cx][i]->setColor(Color3B::GRAY);
-			sameStars->pushBack(stars[cx][i]);
+	//upper
+	if (cy < NUM_OF_STAR_ROW - 1 && stars[cx][cy + 1]->getColor() == center->getColor()) {
+		if (!sameStars->contains(stars[cx][cy + 1])) { 
+			sameStars->pushBack(stars[cx][cy + 1]); 
+			roundStars->pushBack(stars[cx][cy + 1]);
 		}
-		else { break; }
 	}
 
-	//get lower stars in the same color with center star
-	for (int i = cy - 1; i >= 0; i--) {
-		if (stars[cx][i]->getColor() == center->getColor()) {
-			stars[cx][i]->setColor(Color3B::GRAY);
-			sameStars->pushBack(stars[cx][i]);
+	//lower
+	if (cy > 0 && stars[cx][cy - 1]->getColor() == center->getColor()) {
+		if (!sameStars->contains(stars[cx][cy - 1])) { 
+			sameStars->pushBack(stars[cx][cy - 1]); 
+			roundStars->pushBack(stars[cx][cy - 1]);
 		}
-		else { break; }
 	}
 
-	//get right stars in the same color with center star
-	for (int i = cx + 1; i < NUM_OF_STAR_ROW; i++) {
-		if (stars[i][cy]->getColor() == center->getColor()) {
-			stars[i][cy]->setColor(Color3B::GRAY);
-			sameStars->pushBack(stars[i][cy]);
+	//right
+	if (cx < NUM_OF_STAR_ROW - 1 && stars[cx + 1][cy]->getColor() == center->getColor()) {
+		if (!sameStars->contains(stars[cx + 1][cy])) { 
+			sameStars->pushBack(stars[cx + 1][cy]);
+			roundStars->pushBack(stars[cx + 1][cy]);
 		}
-		else { break; }
 	}
 
-	//get left stars in the same color with center star
-	for (int i = cx - 1; i >= 0; i--) {
-		if (stars[i][cy]->getColor() == center->getColor()) {
-			stars[i][cy]->setColor(Color3B::GRAY);
-			sameStars->pushBack(stars[i][cy]);
+	//left
+	if (cx > 0 && stars[cx - 1][cy]->getColor() == center->getColor()) {
+		if (!sameStars->contains(stars[cx - 1][cy])) { 
+			sameStars->pushBack(stars[cx - 1][cy]);
+			roundStars->pushBack(stars[cx - 1][cy]);
 		}
-		else { break; }
 	}
-	return sameStars;
+
+	return roundStars;
+}
+
+/*
+	getAllSameStars: get all of the stars in the same color with the giving center star, 
+	push them into sameStars, including the giving center star
+*/
+void HelloWorld::getAllSameStars(Star* center) {
+	sameStars = new Vector<Star*>();
+	Vector<Star*>* first = new Vector<Star*>();
+	first->pushBack(center);
+	sameStars->pushBack(center);
+	getSameStarsIterator(first);
+}
+
+/*
+	getSameStarsIterator: iteratively get the stars in the same color by the giving vector of stars
+*/
+void HelloWorld::getSameStarsIterator(Vector<Star*>* input) {
+	if (!input || input->size() == 0) {
+		return;
+	}
+
+	for (auto it = input->begin(); it != input->end(); it++) {
+		Vector<Star*>* round = getRoundSameStars(*it);
+		getSameStarsIterator(round);
+	}
 }
 
 void HelloWorld::menuCloseCallback(Ref* pSender)
