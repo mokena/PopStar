@@ -1,4 +1,5 @@
 #include "Star.h"
+#include "HelloWorldScene.h"
 
 Star* Star::createWithArgs(Color3B color, Size size, Vec2 pos) {
 	Star* star = new Star();
@@ -41,4 +42,19 @@ Vec2 Star::getPos() {
 void Star::setPos(Vec2 position) {
 	pos = position;
 	//setPosition(Vec2(pos.x, pos.y));
+}
+
+void Star::move(int direction) {
+	switch (direction) {
+	case DIRECTION_DOWN:
+		runAction(MoveBy::create(0.25f, Vec2(0, -getContentSize().height - HelloWorld::STAR_GAP)));
+		pos = Vec2(pos.x, pos.y - 1);
+		break;
+	case DIRECTION_LEFT:
+		runAction(MoveBy::create(0.25f, Vec2(-getContentSize().width - HelloWorld::STAR_GAP, 0)));
+		pos = Vec2(pos.x - 1, pos.y);
+		break;
+	default:
+		break;
+	}
 }

@@ -38,11 +38,15 @@ bool HelloWorld::init()
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = [this](Touch* t, Event* e) {
 		Star* star = getTouchedStar(t->getLocation());
-		//getRoundSameStars(star);
 		getAllSameStars(star);
-		for (auto it = sameStars->begin(); it != sameStars->end(); it++) {
-			(*it)->setColor(Color3B::GRAY);
+
+		if (sameStars->size() > 1) {
+			for (auto it = sameStars->begin(); it != sameStars->end(); it++) {
+				//(*it)->setColor(Color3B::GRAY);
+				dismissStar(*it);
+			}
 		}
+		
 		return false;
 	};
 
@@ -95,7 +99,7 @@ Vector<Star*>* HelloWorld::getRoundSameStars(Star* center) {
 	int cy = center->getPos().y;
 	
 	//upper
-	if (cy < NUM_OF_STAR_ROW - 1 && stars[cx][cy + 1]->getColor() == center->getColor()) {
+	if (cy < NUM_OF_STAR_ROW - 1 && stars[cx][cy + 1] && stars[cx][cy + 1]->getColor() == center->getColor()) {
 		if (!sameStars->contains(stars[cx][cy + 1])) { 
 			sameStars->pushBack(stars[cx][cy + 1]); 
 			roundStars->pushBack(stars[cx][cy + 1]);
@@ -103,7 +107,7 @@ Vector<Star*>* HelloWorld::getRoundSameStars(Star* center) {
 	}
 
 	//lower
-	if (cy > 0 && stars[cx][cy - 1]->getColor() == center->getColor()) {
+	if (cy > 0 && stars[cx][cy - 1] && stars[cx][cy - 1]->getColor() == center->getColor()) {
 		if (!sameStars->contains(stars[cx][cy - 1])) { 
 			sameStars->pushBack(stars[cx][cy - 1]); 
 			roundStars->pushBack(stars[cx][cy - 1]);
@@ -111,7 +115,7 @@ Vector<Star*>* HelloWorld::getRoundSameStars(Star* center) {
 	}
 
 	//right
-	if (cx < NUM_OF_STAR_ROW - 1 && stars[cx + 1][cy]->getColor() == center->getColor()) {
+	if (cx < NUM_OF_STAR_ROW - 1 && stars[cx + 1][cy] && stars[cx + 1][cy]->getColor() == center->getColor()) {
 		if (!sameStars->contains(stars[cx + 1][cy])) { 
 			sameStars->pushBack(stars[cx + 1][cy]);
 			roundStars->pushBack(stars[cx + 1][cy]);
@@ -119,7 +123,7 @@ Vector<Star*>* HelloWorld::getRoundSameStars(Star* center) {
 	}
 
 	//left
-	if (cx > 0 && stars[cx - 1][cy]->getColor() == center->getColor()) {
+	if (cx > 0 && stars[cx - 1][cy] && stars[cx - 1][cy]->getColor() == center->getColor()) {
 		if (!sameStars->contains(stars[cx - 1][cy])) { 
 			sameStars->pushBack(stars[cx - 1][cy]);
 			roundStars->pushBack(stars[cx - 1][cy]);
@@ -153,6 +157,41 @@ void HelloWorld::getSameStarsIterator(Vector<Star*>* input) {
 		Vector<Star*>* round = getRoundSameStars(*it);
 		getSameStarsIterator(round);
 	}
+}
+
+/*
+	dismissStar: dismiss the giving star, upper stars go down, right stars go left
+*/
+void HelloWorld::dismissStar(Star* star) {
+	Vec2 pos = star->getPos();
+
+	stars[(int)pos.x][(int)pos.y] = nullptr;	
+	
+	for (int i = (int)pos.y + 1; i < NUM_OF_STAR_ROW; i++) {
+		if (stars[(int)pos.x][i]) {
+			stars[(int)pos.x][i]->move(Star::DIRECTION_DOWN);
+			stars[(int)pos.x][i - 1] = stars[(int)pos.x][i];
+			stars[(int)pos.x][i] = nullptr;
+		}
+	}
+
+	if (stars[(int)pos.x][0] == nullptr) {
+		CCLOG("pos [%d][0] is null", (int)pos.x);
+		for (int i = (int)pos.x + 1; i < NUM_OF_STAR_ROW; i++) {
+			for (int j = 0; j < NUM_OF_STAR_ROW; j++) {
+				if (stars[i][j]) {
+					stars[i][j]->move(Star::DIRECTION_LEFT);
+					stars[i - 1][j] = stars[i][j];
+					stars[i][j] = nullptr;
+				}
+			}
+		}
+	}
+	else {
+		CCLOG("pos [%d][0] is not null", (int)pos.x);
+	}
+		
+	star->setVisible(false);
 }
 
 void HelloWorld::menuCloseCallback(Ref* pSender)

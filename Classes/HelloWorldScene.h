@@ -7,6 +7,8 @@
 class HelloWorld : public cocos2d::Layer
 {
 public:
+	static const float STAR_GAP;
+
     static cocos2d::Scene* createScene();
 
     virtual bool init();
@@ -20,16 +22,16 @@ public:
 private:
 	static const int NUM_OF_STAR_ROW = 10;
 	static const int COLOR_NUM = 6;
-	static const float STAR_GAP;
 
 	Star* stars[10][10];
+	Vector<Star*>* sameStars;
+	Vector<Star*>* getRoundSameStars(Star* center);
 
 	void addStars();
 	Star* getTouchedStar(Vec2 p);
 	void getAllSameStars(Star* center);
-	Vector<Star*>* getRoundSameStars(Star* center);
 	void getSameStarsIterator(Vector<Star*>* input);
-	Vector<Star*>* sameStars;
+	void dismissStar(Star* star);
 };
 
 #endif // __HELLOWORLD_SCENE_H__

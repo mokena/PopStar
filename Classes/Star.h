@@ -8,6 +8,9 @@ private:
 	Vec2 pos;
 
 public:
+	static const int DIRECTION_DOWN = 100;
+	static const int DIRECTION_LEFT = 101;
+
 	static Star* createWithArgs(Color3B color, Size size, Vec2 pos);
 
 	virtual bool init();
@@ -17,4 +20,5 @@ public:
 	Color3B getColor();
 	Point getPos();
 	void setPos(Vec2 position);
+	void move(int direction);
 };
