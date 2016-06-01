@@ -50,6 +50,7 @@ bool HelloWorld::init()
 			}
 
 			while (isGameOver()) {
+				
 				addStars();
 			}
 		}
@@ -173,7 +174,7 @@ void HelloWorld::dismissStar(Star* star) {
 	Vec2 pos = star->getPos();
 	star->cleanup();
 	star->setVisible(false);
-	star->release();
+	star->removeFromParent();
 	CCLOG("dismiss star[%d][%d]", (int)pos.x, (int)pos.y);
 	stars[(int)pos.x][(int)pos.y] = nullptr;	
 	
@@ -203,6 +204,9 @@ void HelloWorld::dismissStar(Star* star) {
 
 }
 
+/*
+	isGameOver: check there is no longer a step to move.
+*/
 bool HelloWorld::isGameOver() {
 	bool gameOver = true;
 	for (int i = 0; i < NUM_OF_STAR_ROW; i = i++) {
@@ -219,8 +223,25 @@ bool HelloWorld::isGameOver() {
 			break;
 		}
 	}
+	if (gameOver) {
+		cleanStars();
+	}
 
 	return gameOver;
+}
+
+/*
+	cleanStars: when game is over, clean the stars array, and remove them from layer
+*/
+void HelloWorld::cleanStars() {
+	for (int i = 0; i < NUM_OF_STAR_ROW; i++) {
+		for (int j = 0; j < NUM_OF_STAR_ROW; j++) {
+			if (stars[i][j]) {
+				stars[i][j]->removeFromParent();
+				stars[i][j] = nullptr;
+			}
+		}
+	}
 }
 
 void HelloWorld::menuCloseCallback(Ref* pSender)
