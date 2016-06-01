@@ -32,6 +32,7 @@ private:
 	void getAllSameStars(Star* center);
 	void getSameStarsIterator(Vector<Star*>* input);
 	void dismissStar(Star* star);
+	bool isGameOver();
 };
 
 #endif // __HELLOWORLD_SCENE_H__

@@ -33,20 +33,27 @@ bool HelloWorld::init()
 	auto colorLayer = LayerColor::create(Color4B(188, 143,143, 255));
 	addChild(colorLayer);
     
-	addStars();
+	do {
+		addStars();
+	} while (isGameOver());
 
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = [this](Touch* t, Event* e) {
 		Star* star = getTouchedStar(t->getLocation());
-		getAllSameStars(star);
+		if (star) {
+			getAllSameStars(star);
+			if (sameStars->size() > 1) {
+				for (auto it = sameStars->begin(); it != sameStars->end(); it++) {
+					//(*it)->setColor(Color3B::GRAY);
+					dismissStar(*it);
+				}
+			}
 
-		if (sameStars->size() > 1) {
-			for (auto it = sameStars->begin(); it != sameStars->end(); it++) {
-				//(*it)->setColor(Color3B::GRAY);
-				dismissStar(*it);
+			while (isGameOver()) {
+				addStars();
 			}
 		}
-		
+ 
 		return false;
 	};
 
@@ -164,7 +171,10 @@ void HelloWorld::getSameStarsIterator(Vector<Star*>* input) {
 */
 void HelloWorld::dismissStar(Star* star) {
 	Vec2 pos = star->getPos();
-
+	star->cleanup();
+	star->setVisible(false);
+	star->release();
+	CCLOG("dismiss star[%d][%d]", (int)pos.x, (int)pos.y);
 	stars[(int)pos.x][(int)pos.y] = nullptr;	
 	
 	for (int i = (int)pos.y + 1; i < NUM_OF_STAR_ROW; i++) {
@@ -190,8 +200,27 @@ void HelloWorld::dismissStar(Star* star) {
 	else {
 		CCLOG("pos [%d][0] is not null", (int)pos.x);
 	}
-		
-	star->setVisible(false);
+
+}
+
+bool HelloWorld::isGameOver() {
+	bool gameOver = true;
+	for (int i = 0; i < NUM_OF_STAR_ROW; i = i++) {
+		for (int j = 0; j < NUM_OF_STAR_ROW; j = j++) {
+			if (stars[i][j]) {
+				getAllSameStars(stars[i][j]);
+				if (sameStars->size() > 1) {
+					gameOver = false;
+					break;
+				}
+			}
+		}
+		if (!gameOver) {
+			break;
+		}
+	}
+
+	return gameOver;
 }
 
 void HelloWorld::menuCloseCallback(Ref* pSender)

@@ -47,12 +47,12 @@ void Star::setPos(Vec2 position) {
 void Star::move(int direction) {
 	switch (direction) {
 	case DIRECTION_DOWN:
-		runAction(MoveBy::create(0.25f, Vec2(0, -getContentSize().height - HelloWorld::STAR_GAP)));
 		pos = Vec2(pos.x, pos.y - 1);
+		runAction(MoveBy::create(0.25f, Vec2(0, -getContentSize().height - HelloWorld::STAR_GAP)));
 		break;
 	case DIRECTION_LEFT:
-		runAction(MoveBy::create(0.25f, Vec2(-getContentSize().width - HelloWorld::STAR_GAP, 0)));
 		pos = Vec2(pos.x - 1, pos.y);
+		runAction(MoveBy::create(0.25f, Vec2(-getContentSize().width - HelloWorld::STAR_GAP, 0)));
 		break;
 	default:
 		break;
